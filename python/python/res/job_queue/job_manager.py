@@ -111,6 +111,8 @@ class JobManager(object):
 
     def __init__(self, module_file="jobs.py", json_file="jobs.json", error_url=None):
         self._job_map = {}
+        self.simulation_id = None
+        self.ert_pid = None
         self._error_url = error_url
         if json_file is not None and os.path.isfile(json_file):
             self._loadJson(json_file)
@@ -146,8 +148,6 @@ class JobManager(object):
 
         umask = _jsonGet(jobs_data, "umask")
         os.umask(int(umask, 8))
-        self.simulation_id = None
-        self.ert_pid = None
         if "simulation_id" in jobs_data:
             self.simulation_id = _jsonGet(jobs_data, "simulation_id")
         if "ert_pid" in jobs_data:

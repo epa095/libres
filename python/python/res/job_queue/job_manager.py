@@ -28,9 +28,19 @@ import pwd
 import requests
 import json
 import imp
+import logging
+from logstash_async.handler import AsynchronousLogstashHandler
+from logging import StreamHandler
 
-LOG_URL = "http://10.220.65.22:4444" #To be extracted up to job_discpatch in the future after a bit of testing and when job_dispatch is properly
+LOG_URL = "10.220.65.22" #To be extracted up to job_discpatch in the future after a bit of testing and when job_dispatch is properly
+LOG_PORT = 4445 #UDP
 #versioned
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(AsynchronousLogstashHandler(
+    LOG_URL, LOG_PORT, database_path='logstash.db'))
+logger.addHandler(StreamHandler(stream=sys.stdout))
 
 
 def redirect(file, fd, open_mode):
@@ -343,9 +353,10 @@ class JobManager(object):
                 sys.stderr.flush()
             else:
                 data = json.dumps(payload)
-                res = requests.post(url, timeout=3,
-                              headers={"Content-Type": "application/json"},
-                              data=data)
+                logger.info("",extra=payload)
+                # res = requests.post(url, timeout=3,
+                #               headers={"Content-Type": "application/json"},
+                #               data=data)
                 # sys.stdout.write("Response status %s\n"%res.status_code)
                 # sys.stdout.write("Request url %s\n"%res.url)
                 # sys.stdout.write("Response headers %s\n"%res.headers)

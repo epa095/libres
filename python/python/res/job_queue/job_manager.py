@@ -111,8 +111,8 @@ class JobManager(object):
 
     def __init__(self, module_file="jobs.py", json_file="jobs.json", error_url=None):
         self._job_map = {}
-        self.simulation_id = None
-        self.ert_pid = None
+        self.simulation_id = ""
+        self.ert_pid = ""
         self._error_url = error_url
         if json_file is not None and os.path.isfile(json_file):
             self._loadJson(json_file)
@@ -346,12 +346,12 @@ class JobManager(object):
                 res = requests.post(url, timeout=3,
                               headers={"Content-Type": "application/json"},
                               data=data)
-                sys.stdout.write("Response status %s\n"%res.status_code)
-                sys.stdout.write("Request url %s\n"%res.url)
-                sys.stdout.write("Response headers %s\n"%res.headers)
-                sys.stdout.write("Response content %s\n"%res.content)
-                sys.stdout.write("Writing payload: %s\n"%payload)
-                sys.stdout.write("Writing data: %s\n"%data)
+                # sys.stdout.write("Response status %s\n"%res.status_code)
+                # sys.stdout.write("Request url %s\n"%res.url)
+                # sys.stdout.write("Response headers %s\n"%res.headers)
+                # sys.stdout.write("Response content %s\n"%res.content)
+                # sys.stdout.write("Writing payload: %s\n"%payload)
+                # sys.stdout.write("Writing data: %s\n"%data)
         except:
             pass
 
@@ -398,7 +398,7 @@ class JobManager(object):
     def runJob(self, job):
         assert_file_executable(job.get('executable'))
         self.addLogLine(job)
-        self.postMessage(job=job, extra_fields={"status": "runJob","finished": False})
+        self.postMessage(job=job, extra_fields={"status": "runJob", "finished": False})
         pid = os.fork()
         exit_status, err_msg = 0, ''
         if pid == 0:

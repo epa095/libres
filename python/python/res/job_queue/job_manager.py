@@ -31,13 +31,16 @@ import imp
 import logging
 from logstash_async.handler import AsynchronousLogstashHandler
 from logging import StreamHandler
+from pythonjsonlogger import jsonlogger
 
 LOG_URL = "10.220.65.22" #To be extracted up to job_discpatch in the future after a bit of testing and when job_dispatch is properly
-LOG_PORT = 4445 #UDP
 #versioned
+LOG_PORT = 4445 #UDP
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+formatter = jsonlogger.JsonFormatter()
+
 logger.addHandler(AsynchronousLogstashHandler(
     LOG_URL, LOG_PORT, database_path='logstash.db'))
 logger.addHandler(StreamHandler(stream=sys.stdout))

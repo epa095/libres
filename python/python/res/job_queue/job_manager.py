@@ -41,9 +41,13 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 formatter = jsonlogger.JsonFormatter()
 
-logger.addHandler(AsynchronousLogstashHandler(
-    LOG_URL, LOG_PORT, database_path='logstash.db'))
-logger.addHandler(StreamHandler(stream=sys.stdout))
+logstash_handler = AsynchronousLogstashHandler(LOG_URL, LOG_PORT, database_path='logstash.db')
+logstash_handler.setFormatter(formatter)
+stream_handler = logging.StreamHandler(stream=sys.stdout)
+stream_handler.setFormatter(formatter)
+
+logger.addHandler(logstash_handler)
+logger.addHandler(stream_handler)
 
 
 def redirect(file, fd, open_mode):
@@ -356,7 +360,7 @@ class JobManager(object):
                 sys.stderr.flush()
             else:
                 data = json.dumps(payload)
-                logger.info("",extra=payload)
+                logger.info(payload)
                 # res = requests.post(url, timeout=3,
                 #               headers={"Content-Type": "application/json"},
                 #               data=data)
